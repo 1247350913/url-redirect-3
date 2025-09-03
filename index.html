@@ -1,6 +1,64 @@
-<!doctype html>
-<meta charset="utf-8">
-<meta http-equiv="refresh" content="0;url=https://script.google.com/macros/s/AKfycbxlP4-muXMakzS-PvrrokZz2n3n_fEPeDFsOb6sqV8mDl5jyjODBI1YuKzBNkvB2AFBAg/exec">
-<script>
-  location.replace("https://script.google.com/macros/s/AKfycbxlP4-muXMakzS-PvrrokZz2n3n_fEPeDFsOb6sqV8mDl5jyjODBI1YuKzBNkvB2AFBAg/exec");
-</script>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Gate</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; padding: 40px; }
+      .card { max-width: 460px; margin: 0 auto; padding: 24px; border: 1px solid #ddd; border-radius: 12px; text-align: center; }
+      h1 { font-size: 20px; margin: 0 0 12px; }
+      input { width: 100%; box-sizing: border-box; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; margin: 0 auto 10px; display: block; }
+      .btn { display: inline-block; padding: 10px 14px; font-size: 16px; border-radius: 8px; border: 0; cursor: pointer; text-decoration: none; }
+      .btn-primary { background: #222; color: #fff; }
+      .btn-secondary { background: #f1f1f1; color: #111; margin-left: 8px; }
+      .btn-row { margin-top: 8px; }
+      .msg { margin-top: 12px; font-size: 14px; min-height: 1em; }
+      .help { font-size:12px;color:#777;margin-top:16px; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Enter your access Key</h1>
+      <input id="key" placeholder="e.g. 7F4X-PQ9B" autofocus />
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="go()">Unlock</button>
+        <button class="btn btn-secondary" onclick="window.location.href = FORM_URL">Request Key</button>
+        <button class="btn btn-secondary" onclick="window.location.href = DOC_URL">Enter</button>
+      </div>
+      <div class="msg" id="msg"></div>
+      <p class="help">Keys expire. If you don’t have one yet, request a key.</p>
+    </div>
+
+    <script>
+      // CONFIG (replace with your real values)
+      const API_URL  = "https://script.google.com/macros/s/AKfycbxlP4-muXMakzS-PvrrokZz2n3n_fEPeDFsOb6sqV8mDl5jyjODBI1YuKzBNkvB2AFBAg/exec";
+      const FORM_URL = "https://forms.gle/Pqg1at9mJxo4mt3y9";
+      const DOC_URL  = "https://docs.google.com/document/d/1TWO8_bb4-5o36kIHGXcGlKCabuvm6YZmOgMe85JdKn4/view";
+
+      async function go(){
+        const key = (document.getElementById('key').value || '').trim();
+        const msg = document.getElementById('msg');
+        msg.textContent = 'Loading…';
+
+        try {
+          const resp = await fetch(API_URL + "?action=validate&key=" + encodeURIComponent(key));
+          const data = await resp.json();
+
+          if (data.ok) {
+            msg.textContent = '✅ Success. Access granted.';
+          } else {
+            const reasons = {
+              'invalid': 'Not recognized.',
+              'expired': 'Expired.',
+              'not-approved': 'Not approved yet.'
+            };
+            msg.textContent = '❌ ' + (reasons[data.reason] || 'Cannot use this key.');
+          }
+        } catch (err) {
+          msg.textContent = '❌ Error contacting server';
+          console.error(err);
+        }
+      }
+    </script>
+  </body>
+</html>
